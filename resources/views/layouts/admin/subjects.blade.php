@@ -15,42 +15,33 @@
 
 @section('content')
 
-    <div class="card mt-5">
-        <input type="hidden" value="{{ csrf_token() }}" id="_token">
+    <div class="card pb-0 mt-5">
         <div class="card-header">
-            Subjects
+            <h6>Subjects</h6>
         </div>
         <div class="card-body">
+            <input type="hidden" value="{{ csrf_token() }}" id="_token">
             <div id="table-alert"></div>
             <div align="right">
                 <button type="button" name="add" id="add" class="btn btn-info">Add</button>
             </div>
-            <table id="schedule-table" class="teble table-bordered">
-                <thead>
-                    <th>ID</th>
-                    <th>Subject Name</th>
-                    <th>Subject Code</th>
-                    <th>Subject Unit</th>
-                    <th>Subject Hours</th>
-                    <th>Subject Year Prerequisite</th>
-                    <th>Subject Prerequisite</th>
-                    <th>Subject Description</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                </tbody>
-                <tfoot>
-                    <th>ID</th>
-                    <th>Subject Name</th>
-                    <th>Subject Code</th>
-                    <th>Subject Unit</th>
-                    <th>Subject Hours</th>
-                    <th>Subject Year Prerequisite</th>
-                    <th>Subject Prerequisite</th>
-                    <th>Subject Description</th>
-                    <th></th>
-                </tfoot>
-            </table>
+            <div class="table-responsive">
+                <table id="schedule-table" class="teble">
+                    <thead>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Name</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Code</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Unit</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Hours</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Year Prerequisite</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Prerequisite</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Description</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -108,6 +99,13 @@
                 var value = $(this).text();
                 update_data(id, column_name, value);
             });
+            function check_inputs(){
+                var check = true;
+                for(var i = 1; i < 8; i++){
+                    if($("#data" + i).text() == '') check = false;
+                }
+                return check;
+            }
             $(document).on('click', '#insert', function(){
                 var subject_name = $('#data1').text();
                 var subject_code = $('#data2').text();
@@ -116,7 +114,7 @@
                 var subject_year_prerequisite = $('#data5').text();
                 var subject_prerequisite = $('#data6').text();
                 var subject_description = $('#data7').text();
-                if(subject_name != ''){
+                if(check_inputs()){
                     $.ajax({
                         url:"{{ route('admin.addsubject') }}",
                         method:"POST",

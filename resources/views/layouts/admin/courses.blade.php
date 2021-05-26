@@ -17,7 +17,7 @@
 
     <div class="card pb-0 mt-5">
         <div class="card-header">
-            <h6>Departments</h6>
+            <h6>Courses</h6>
         </div>
         <div class="card-body">
             <input type="hidden" value="{{ csrf_token() }}" id="_token">
@@ -29,7 +29,8 @@
                 <table id="schedule-table" class="teble">
                     <thead>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Department Name</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Course Name</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Course Department</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                     </thead>
                     <tbody>
@@ -42,8 +43,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script>
+        var departments;
         $(document).ready(function(){
-  
+            
             fetch_data();
             function fetch_data(){
                 var dataTable = $('#schedule-table').DataTable({
@@ -51,23 +53,32 @@
                     "serverSide" : true,
                     "order" : [],
                     "ajax" : {
-                        url:"{{ route('admin.getdepartments') }}",
+                        url:"{{ route('admin.getsubjects') }}",
                         type:"post",
                         data: {_token: $("#_token").val()}
                     }
                 });
+                $.ajax({
+                    url: "{{ route('admin.courses.getdepartments') }}",
+                    method: "GET",
+                    success: function(d){
+                        d = JSON.parse(d);
+                        console.log(d);
+                    }
+                })
             }
             $('#add').click(function(){
                 var html = '<tr>';
                 html += '<td  ></td>';
                 html += '<td contenteditable id="data1" ></td>';
+                html += '<td contenteditable><select</td>';
                 html += '<td  ><button type="button" name="insert" id="insert" class="btn btn-success btn-xs">Insert</button></td>';
                 html += '</tr>';
                 $('#schedule-table tbody').prepend(html);
             });
             function update_data(id, column_name, value){
                 $.ajax({
-                    url:"{{ route('admin.updatedepartment') }}",
+                    url:"{{ route('admin.updatesubject') }}",
                     method:"POST",
                     data:{id:id, column_name:column_name, value:value, _token: $("#_token").val()},
                     success:function(data)
@@ -89,7 +100,7 @@
             });
             function check_inputs(){
                 var check = true;
-                for(var i = 1; i < 2; i++){
+                for(var i = 1; i < 8; i++){
                     if($("#data" + i).text() == '') check = false;
                 }
                 return check;
@@ -98,7 +109,7 @@
                 var department_name = $('#data1').text();
                 if(check_inputs()){
                     $.ajax({
-                        url:"{{ route('admin.adddepartment') }}",
+                        url:"{{ route('admin.addsubject') }}",
                         method:"POST",
                         data:{
                             department_name: department_name,
@@ -122,7 +133,7 @@
                 var id = $(this).attr("id");
                 if(confirm("Are you sure you want to remove this?")){
                     $.ajax({
-                        url:"{{ route('admin.deletedepartment') }}",
+                        url:"{{ route('admin.deletesubject') }}",
                         method:"POST",
                         data:{id:id, _token: $("#_token").val()},
                         success:function(data){

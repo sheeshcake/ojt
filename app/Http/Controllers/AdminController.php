@@ -7,6 +7,6 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     public function index(){
-        return view("layouts.admin.dashboard")->with("dashboard", "active");;
+        return view("layouts.admin.dashboard")->with("dashboard", "active");
     }
 }

@@ -19,7 +19,7 @@ class SubjectsController extends Controller
         $counter = 0;
         foreach($subjects as $data){
             $allsubjects[$counter][0] = '<div class="text-dark">' . $data["id"] . '</div>';
-            $allsubjects[$counter][1] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subjects_link">' . $data["subject_name"] . '</div>';
+            $allsubjects[$counter][1] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subjects_name">' . $data["subject_name"] . '</div>';
             $allsubjects[$counter][2] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_code">' . $data["subject_code"] . '</div>';
             $allsubjects[$counter][3] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_unit">' . $data["subject_unit"] . '</div>';
             $allsubjects[$counter][4] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_hours">' . $data["subject_hours"] . '</div>';

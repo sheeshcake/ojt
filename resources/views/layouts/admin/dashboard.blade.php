@@ -13,3 +13,10 @@
 <h6 class="font-weight-bolder mb-0">Dashboard</h6>
 @endsection
 
+@section('content')
+<div class="alert alert-primary">
+    This is Dashboard
+</div>
+
+@endsection
+
