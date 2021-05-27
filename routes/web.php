@@ -39,7 +39,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => '/admin'], function(){
     Route::prefix('courses')->group(function(){
         Route::get('/', [CourseController::class, 'index'])->name("admin.courses");
         Route::post('/', [CourseController::class, 'get'])->name("admin.getcourses");
-        Route::get('/getdepartments', [CourseController::class, 'search'])->name("admin.courses.getdepartments");
+        Route::get('/getdepartments', [CourseController::class, 'get_departments'])->name("admin.courses.getdepartments");
         Route::post('/add', [CourseController::class, 'create'])->name("admin.addcourse");
         Route::post('/delete', [CourseController::class, 'delete'])->name("admin.deletecourse");
         Route::post('/update', [CourseController::class, 'update'])->name("admin.updatecourse");

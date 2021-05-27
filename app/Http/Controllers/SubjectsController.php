@@ -24,7 +24,7 @@ class SubjectsController extends Controller
             $allsubjects[$counter][3] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_unit">' . $data["subject_unit"] . '</div>';
             $allsubjects[$counter][4] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_hours">' . $data["subject_hours"] . '</div>';
             $allsubjects[$counter][5] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_year_prerequisite">' . $data["subject_year_prerequisite"] . '</div>';
-            $allsubjects[$counter][6] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_prerequisite">' . $data["subject_prerequisite"] . '</div>';
+            $allsubjects[$counter][6] = '<div class="update text-dark" data-id="'.$data["id"].'" data-column="subject_prerequisite">' . $data["subject_prerequisite"] . '</div>';
             $allsubjects[$counter][7] = '<div contenteditable class="update text-dark" data-id="'.$data["id"].'" data-column="subject_description">' . $data["subject_description"] . '</div>';
             $allsubjects[$counter][8] = '<button type="button" name="delete" class="btn btn-danger btn-xs delete" id="'.$data["id"].'">Delete</button>';
             $counter++;

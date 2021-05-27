@@ -45,7 +45,7 @@
     <script>
         var departments;
         $(document).ready(function(){
-            
+            var select;
             fetch_data();
             function fetch_data(){
                 var dataTable = $('#schedule-table').DataTable({
@@ -53,66 +53,66 @@
                     "serverSide" : true,
                     "order" : [],
                     "ajax" : {
-                        url:"{{ route('admin.getsubjects') }}",
+                        url:"{{ route('admin.getcourses') }}",
                         type:"post",
                         data: {_token: $("#_token").val()}
                     }
                 });
                 $.ajax({
-                    url: "{{ route('admin.courses.getdepartments') }}",
+                    url: "{{route('admin.courses.getdepartments')}}",
                     method: "GET",
                     success: function(d){
                         d = JSON.parse(d);
-                        console.log(d);
-                    }
-                })
+                        select = "<select class='custom-select' id='department'>";
+                        d.forEach((item) => {
+                            select += '<option value=" ' + item['id'] +  ' ">' + item["department_name"] + "</option>";
+                        });
+                        select += "</select>";
+                    } 
+                });
             }
+            
             $('#add').click(function(){
                 var html = '<tr>';
                 html += '<td  ></td>';
                 html += '<td contenteditable id="data1" ></td>';
-                html += '<td contenteditable><select</td>';
+                html += '<td> ' + select + ' </td>';
                 html += '<td  ><button type="button" name="insert" id="insert" class="btn btn-success btn-xs">Insert</button></td>';
                 html += '</tr>';
                 $('#schedule-table tbody').prepend(html);
             });
-            function update_data(id, column_name, value){
-                $.ajax({
-                    url:"{{ route('admin.updatesubject') }}",
-                    method:"POST",
-                    data:{id:id, column_name:column_name, value:value, _token: $("#_token").val()},
-                    success:function(data)
-                    {
-                        $('#table-alert').html('<div class="alert alert-success">'+data+'</div>');
-                        $('#schedule-table').DataTable().destroy();
-                        fetch_data();
-                    }
-                });
-                setTimeout(function(){
-                    $('#table-alert').html('');
-                }, 5000);
-            }
+            // function update_data(id, column_name, value){
+            //     $.ajax({
+            //         url:"{{ route('admin.updatecourse') }}",
+            //         method:"POST",
+            //         data:{id:id, column_name:column_name, value:value, _token: $("#_token").val()},
+            //         success:function(data)
+            //         {
+            //             $('#table-alert').html('<div class="alert alert-success">'+data+'</div>');
+            //             $('#schedule-table').DataTable().destroy();
+            //             fetch_data();
+            //         }
+            //     });
+            //     setTimeout(function(){
+            //         $('#table-alert').html('');
+            //     }, 5000);
+            // }
             $(document).on('blur', '.update', function(){
                 var id = $(this).data("id");
                 var column_name = $(this).data("column");
                 var value = $(this).text();
                 update_data(id, column_name, value);
             });
-            function check_inputs(){
-                var check = true;
-                for(var i = 1; i < 8; i++){
-                    if($("#data" + i).text() == '') check = false;
-                }
-                return check;
-            }
             $(document).on('click', '#insert', function(){
-                var department_name = $('#data1').text();
-                if(check_inputs()){
+                var course_name = $('#data1').text();
+                var department_id = $('#department').val();
+                if(course_name != ''){
                     $.ajax({
-                        url:"{{ route('admin.addsubject') }}",
+                        url:"{{ route('admin.addcourse') }}",
                         method:"POST",
                         data:{
-                            department_name: department_name,
+                            department_id: department_id,
+                            course_name:course_name,
                             _token: $("#_token").val()
                             },
                         success:function(data){
@@ -133,7 +133,7 @@
                 var id = $(this).attr("id");
                 if(confirm("Are you sure you want to remove this?")){
                     $.ajax({
-                        url:"{{ route('admin.deletesubject') }}",
+                        url:"{{ route('admin.deletecourse') }}",
                         method:"POST",
                         data:{id:id, _token: $("#_token").val()},
                         success:function(data){
