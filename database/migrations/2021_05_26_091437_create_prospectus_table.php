@@ -17,6 +17,8 @@ class CreateProspectusTable extends Migration
             $table->id();
             $table->foreignId("course_id");
             $table->foreignId("subject_id");
+            $table->string("subject_semester");
+            $table->string("subject_year");
             $table->timestamps();
         });
     }

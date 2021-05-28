@@ -17,7 +17,7 @@ class CreateGradesTable extends Migration
             $table->id();
             $table->foreignId("student_id");
             $table->foreignId("subject_id");
-            $table->string("grade");
+            $table->string("grade")->default("none");
             $table->timestamps();
         });
     }

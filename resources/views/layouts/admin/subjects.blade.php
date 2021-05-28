@@ -49,7 +49,7 @@
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function(){
-  
+            var select;
             fetch_data();
             function fetch_data(){
                 var dataTable = $('#schedule-table').DataTable({
@@ -62,6 +62,16 @@
                         data: {_token: $("#_token").val()}
                     }
                 });
+                $.ajax({
+                    url: "{{ route('admin.subjects.getsubjects') }}",
+                    method: "GET",
+                    success: function(d){
+                        d = JSON.parse(d);
+                        d.forEach((item)=>{
+                            select += "<option value='" + item["id"] + "'>" + item["subject_name"] + "</option>";
+                        });
+                    }
+                })
             }
             $('#add').click(function(){
                 var html = '<tr>';
@@ -71,7 +81,7 @@
                 html += '<td contenteditable id="data3" ></td>';
                 html += '<td contenteditable id="data4" ></td>';
                 html += '<td contenteditable id="data5" ></td>';
-                html += '<td contenteditable id="data6" ></td>';
+                html += '<td><select id="data6">' + select + '</select></td>';
                 html += '<td contenteditable id="data7" ></td>';
                 html += '<td  ><button type="button" name="insert" id="insert" class="btn btn-success btn-xs">Insert</button></td>';
                 html += '</tr>';
@@ -112,7 +122,7 @@
                 var subject_unit = $('#data3').text();
                 var subject_hours = $('#data4').text();
                 var subject_year_prerequisite = $('#data5').text();
-                var subject_prerequisite = $('#data6').text();
+                var subject_prerequisite = $('#data6').val();
                 var subject_description = $('#data7').text();
                 if(check_inputs()){
                     $.ajax({

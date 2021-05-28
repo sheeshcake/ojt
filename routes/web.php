@@ -7,6 +7,11 @@ use App\Http\Controllers\SubjectsController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProspectusController;
+use App\Http\Controllers\DeanLoginController;
+use App\Http\Controllers\DeanController;
+use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\LoadSubjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +30,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => '/admin'], function(){
     Route::prefix('subjects')->group(function(){
         Route::get('/', [SubjectsController::class, 'index'])->name("admin.subjects");
         Route::post('/', [SubjectsController::class, 'get'])->name("admin.getsubjects");
+        Route::get('/subjects', [SubjectsController::class, 'get_subjects'])->name("admin.subjects.getsubjects");
         Route::post('/add', [SubjectsController::class, 'create'])->name("admin.addsubject");
         Route::post('/delete', [SubjectsController::class, 'delete'])->name("admin.deletesubject");
         Route::post('/update', [SubjectsController::class, 'update'])->name("admin.updatesubject");
@@ -44,8 +50,49 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => '/admin'], function(){
         Route::post('/delete', [CourseController::class, 'delete'])->name("admin.deletecourse");
         Route::post('/update', [CourseController::class, 'update'])->name("admin.updatecourse");
     });
+    Route::prefix('prospectus')->group(function(){
+        Route::get('/', [ProspectusController::class, 'index'])->name("admin.prospectus");
+        Route::post('/', [ProspectusController::class, 'get'])->name("admin.getprospectus");
+        Route::get('/getsubjects', [ProspectusController::class, 'get_subjects'])->name("admin.prospectus.getsubjects");
+        Route::post('/getcourses', [ProspectusController::class, 'get_courses'])->name("admin.prospectus.getcourses");
+        Route::post('/add', [ProspectusController::class, 'create'])->name("admin.addprospectus");
+        Route::post('/delete', [ProspectusController::class, 'delete'])->name("admin.deleteprospectus");
+        Route::post('/update', [ProspectusController::class, 'update'])->name("admin.updateprospectus");
+    });
+
+    Route::prefix('deans')->group(function(){
+        Route::get('/', [DeanController::class, 'index'])->name("admin.deans");
+        Route::post('/', [DeanController::class, 'get'])->name("admin.getdeans");
+        Route::post('/add', [DeanController::class, 'create'])->name("admin.adddean");
+        Route::post('/delete', [DeanController::class, 'delete'])->name("admin.deletedean");
+        Route::post('/update', [DeanController::class, 'update'])->name("admin.updatedean");
+    });
+    Route::prefix('students')->group(function(){
+        Route::get('/', [StudentsController::class, 'index'])->name("admin.students");
+        Route::post('/', [StudentsController::class, 'get'])->name("admin.getstudents");
+        Route::post('/add', [StudentsController::class, 'create'])->name("admin.addstudent");
+        Route::post('/delete', [StudentsController::class, 'delete'])->name("admin.deletestudent");
+        Route::post('/update', [StudentsController::class, 'update'])->name("admin.updatestudent");
+    });
 
 });
+
+
+Route::group(['middleware' => 'auth:dean', 'prefix' => '/dean'], function(){
+    Route::get('/dashboard', [DeanController::class, 'index'])->name("dean.dashboard");
+    Route::prefix('loadsubjects')->group(function(){
+        Route::get('/', [LoadSubjectController::class, 'index'])->name("dean.loadsubjects");
+        Route::post('/', [LoadSubjectController::class, 'get'])->name("dean.getloadsubjects");
+        Route::get('/getsubjects', [LoadSubjectController::class, 'get_subjects'])->name("dean.loadsubjects.getsubjects");
+        Route::post('/getcourses', [LoadSubjectController::class, 'get_courses'])->name("dean.loadsubjects.getcourses");
+        Route::post('/add', [LoadSubjectController::class, 'create'])->name("dean.addloadsubjects");
+        Route::post('/delete', [LoadSubjectController::class, 'delete'])->name("dean.deleteloadsubjects");
+        Route::post('/update', [LoadSubjectController::class, 'update'])->name("dean.updateloadsubjects");
+    });
+});
+
+
+
 Route::get("/", function () {
     return view('main');
 });
@@ -57,4 +104,9 @@ Route::get("/login", function(){
 Route::prefix('/adminlogin')->group(function(){
     Route::get("/", [AdminLoginController::class, 'index']);
     Route::post("/", [AdminLoginController::class, 'dologin'])->name("admin.login");
+});
+
+Route::prefix('/deanlogin')->group(function(){
+    Route::get("/", [DeanLoginController::class, 'index']);
+    Route::post("/", [DeanLoginController::class, 'dologin'])->name("dean.login");
 });

@@ -1,44 +1,28 @@
-<div class="collapse navbar-collapse  w-auto" id="sidenav-collapse-main">
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link @if(isset($dashboard)){{ $dashboard }}@endif" href="{{ route('admin.dashboard') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-tachometer blackiconcolor" aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Dashboard</span>
-            </a>
+
+
+<li class="sidebar-item @if(isset($dashboard)){{ $dashboard }}@endif">
+    <a href="{{ route('admin.dashboard') }}" class='sidebar-link'>
+        <i class="bi bi-grid-fill"></i>
+        <span>Dashboard</span>
+    </a>
+</li>
+<li class="sidebar-item  has-sub">
+    <a href="#" class='sidebar-link active'>
+        <i class="bi bi-stack"></i>
+        <span>Menu</span>
+    </a>
+    <ul class="submenu ">
+        <li class="submenu-item @if(isset($subjects)){{ $subjects }}@endif">
+            <a href="{{ route('admin.subjects') }}">Subjects</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @if(isset($subjects)){{ $subjects }}@endif" href="{{ route('admin.subjects') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-book blackiconcolor" aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Subjects</span>
-            </a>
+        <li class="submenu-item @if(isset($courses)){{ $courses }}@endif">
+            <a href="{{ route('admin.courses') }}">Course</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @if(isset($courses)){{ $courses }}@endif" href="{{ route('admin.courses') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-star blackiconcolor" aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Course</span>
-            </a>
+        <li class="submenu-item @if(isset($departments)){{ $departments }}@endif">
+            <a href="{{ route('admin.departments') }}">Departments</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @if(isset($departments)){{ $departments }}@endif" href="{{ route('admin.departments') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-building blackiconcolor" aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Departments</span>
-            </a>
+        <li class="submenu-item @if(isset($prospectus)){{ $prospectus }}@endif">
+            <a href="{{ route('admin.prospectus') }}">Prospectus</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @if(isset($prospectus)){{ $prospectus }}@endif" href="{{ url('/') }}/pages/rtl.html">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-building blackiconcolor" aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Prospectus</span>
-            </a>
-        </li>
-    </ul>
-</div>
+    <ul>
+</li>
