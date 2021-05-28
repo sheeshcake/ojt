@@ -8,6 +8,7 @@ use App\Models\Prospectus;
 use App\Models\Course;
 use App\Models\Subject;
 
+
 class ProspectusController extends Controller
 {
     public function index(){
@@ -25,7 +26,9 @@ class ProspectusController extends Controller
     }
 
     public function get(Request $request){
-        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+                            ->where("prospectus.course_id", "=", $request->id)
+                            ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
         $subjects = Subject::all()->toArray();
         $allprospectus = [];
         $counter = 0;

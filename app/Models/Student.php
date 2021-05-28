@@ -16,6 +16,7 @@ class Student extends Authenticatable
         'f_name',
         'l_name',
         'username',
+        'course_id',
         'plain_password',
         'password',
     ];

@@ -2,7 +2,7 @@
 
 
 @section('sidebar')
-    @include('layouts.admin.includes.sidebar')
+    @include('layouts.dean.includes.sidebar')
 @endsection
 
 @section('breadcrumb')
@@ -23,8 +23,8 @@
             <input type="hidden" value="{{ csrf_token() }}" id="_token">
             <div class="row">
                 <div class="form-group col">
-                    <label for="">Course</label>
-                    <select name="" id="course_select" class="form-control" data-live-search="true"></select>
+                    <label for="">Student</label>
+                    <select name="" id="student_select" class="form-control" data-live-search="true"></select>
                 </div>
             </div>
             <div id="table-alert"></div>
@@ -32,25 +32,6 @@
                 <div class="form-group col">
                     <label for="">Subject</label>
                     <select id="subject" class="form-control" data-live-search="true" >
-                    </select>
-                </div>
-                <div class="form-group col">
-                    <label for="">Year</label>
-                    <select id="year" class="form-control select-picker">
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                        <option value="5">5th Year</option>
-                        <option value="Summer">Summer</option>
-                    </select>
-                </div>
-                <div class="form-group col">
-                    <label for="">Semester</label>
-                    <select id="sem" class="form-control select-picker">
-                        <option value="1">1st Semester</option>
-                        <option value="2">2nd Semester</option>
-                        <option value="Summer">Summer</option>
                     </select>
                 </div>
                 <div class="form-group col">
@@ -66,7 +47,7 @@
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Hours</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject Prerequisite</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Year</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Semester</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Grade</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                     </thead>
                     <tbody>
@@ -84,7 +65,7 @@
     <script>
         var departments;
         $(document).ready(function(){
-            var select_course;
+            var select_student;
             var select_subject
             fetch_data();
             $(".select-picker").selectpicker();
@@ -94,26 +75,26 @@
                     "serverSide" : true,
                     "order" : [[4, "asc"]],
                     "ajax" : {
-                        url:"{{ route('admin.getprospectus') }}",
+                        url:"{{ route('dean.getloadsubjects') }}",
                         type:"post",
-                        data: {_token: $("#_token").val(), id: $("#course_select").val()}
+                        data: {_token: $("#_token").val(), id: 1}
                     },
                 });
                 $.ajax({
-                    url: "{{route('admin.prospectus.getcourses')}}",
+                    url: "{{route('dean.loadsubjects.getstudents')}}",
                     method: "POST",
                     data: {_token: $("#_token").val(), id:course},
                     success: function(d){
                         d = JSON.parse(d);
                         d.forEach((item) => {
-                            select_course += '<option value=" ' + item['id'] +  ' ">' + item["course_name"] + "</option>";
+                            select_student += '<option value=" ' + item['id'] +  ' ">' + item["f_name"] + " " + item["l_name"]  + "</option>";
                         });
-                        $("#course_select").append(select_course);
-                        $("#course_select").selectpicker();
+                        $("#student_select").append(select_student);
+                        $("#student_select").selectpicker();
                     } 
                 });
                 $.ajax({
-                    url: "{{route('admin.prospectus.getsubjects')}}",
+                    url: "{{route('dean.loadsubjects.getsubjects')}}",
                     method: "GET",
                     success: function(d){
                         d = JSON.parse(d);
@@ -133,19 +114,15 @@
                 update_data(id, column_name, value);
             });
             $(document).on('click', '#add', function(){
-                var course_id = $('#course_select').val();
+                var student_id = $('#student_select').val();
                 var subject_id = $('#subject').val();
-                var subject_semester = $('#sem').val();
-                var subject_year = $('#year').val();
                 if(subject_id != ''){
                     $.ajax({
-                        url:"{{ route('admin.addprospectus') }}",
+                        url:"{{ route('dean.addloadsubjects') }}",
                         method:"POST",
                         data:{
-                            course_id: course_id,
+                            student_id: student_id,
                             subject_id: subject_id,
-                            subject_semester: subject_semester,
-                            subject_year: subject_year,
                             _token: $("#_token").val()
                             },
                         success:function(data){
@@ -166,7 +143,7 @@
                 var id = $(this).attr("id");
                 if(confirm("Are you sure you want to remove this?")){
                     $.ajax({
-                        url:"{{ route('admin.deletecourse') }}",
+                        url:"",
                         method:"POST",
                         data:{id:id, _token: $("#_token").val()},
                         success:function(data){

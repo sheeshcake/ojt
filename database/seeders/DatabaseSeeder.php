@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Admin;
 use App\Models\Student;
 use App\Models\Dean;
+use App\Models\Department;
+use App\Models\Course;
 
 use Hash;
 
@@ -34,10 +36,18 @@ class DatabaseSeeder extends Seeder
             "plain_password" => "dean",
             "password" => Hash::make("dean")
         ]);
+        Department::create([
+            "department_name" => "CECS",
+        ]);
+        Course::create([
+            "course_name" => "BSIT",
+            "department_id" => "1"
+        ]);
         Student::create([
             "f_name" => "student",
             "l_name" => "student",
             "username" => "student",
+            "course_id" => "1",
             "plain_password" => "student",
             "password" => Hash::make("student")
         ]);

@@ -7,15 +7,18 @@ use Illuminate\Http\Request;
 use App\Models\Prospectus;
 use App\Models\Course;
 use App\Models\Subject;
+use App\Models\Student;
+use App\Models\Grades;
+
 
 class LoadSubjectController extends Controller
 {
     public function index(){
-        return view("layouts.admin.prospectus")->with("prospectus", "active");
+        return view("layouts.dean.loadsubject")->with("prospectus", "active");
     }
 
-    public function get_courses(){
-        $data = Course::all()->toArray();
+    public function get_students(){
+        $data = Student::all()->toArray();
         return json_encode($data);
     }
 
@@ -25,7 +28,11 @@ class LoadSubjectController extends Controller
     }
 
     public function get(Request $request){
-        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        $student_course = Student::where("id", "=", $request->id)->get(["course_id"])->toArray();
+        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+                            ->where("prospectus.course_id", "=", $student_course[0]["course_id"])
+                            ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        $grades = Grades::where("student_id", "=", $request->id)->get()->toArray();
         $subjects = Subject::all()->toArray();
         $allprospectus = [];
         $counter = 0;
@@ -39,8 +46,26 @@ class LoadSubjectController extends Controller
             }
             $allprospectus[$counter][3] = '<div text-dark" data-id="'.$data["prospectus_id"].'" data-column="subject_prerequisite">' . $selectprereq . '</div>';
             $allprospectus[$counter][4] = '<div text-dark" data-id="'.$data["prospectus_id"].'" data-column="subject_year">' . $data["subject_year"] . '</div>';
-            $allprospectus[$counter][5] = '<div text-dark" data-id="'.$data["prospectus_id"].'" data-column="subject_semester">' . $data["subject_semester"] . '</div>';
-            $allprospectus[$counter][6] = '<button type="button" name="delete" class="btn btn-danger btn-xs delete" id="'.$data["course_id"].'">Delete</button>';
+            $grade_total = "";
+            
+            if(count($grades) == 0){
+                $grade_total = 'Not Enrolled';
+            }else{
+                foreach($grades as $grade){
+                    if($grade["subject_id"] == $data["subject_id"]){
+                        if($grade["grade"] == "none") {
+                            $grade_total = 'Enrolled(wating for grades)';
+                        }else{
+                            $grade_total = $grade["grade"];
+                        }
+                    }else{
+                        $grade_total = 'Not Enrolled';
+                    }
+
+                }
+            }
+            $allprospectus[$counter][5] = $grade_total;
+            $allprospectus[$counter][6] = '';
             $counter++;
         }
         $output = array(
@@ -53,13 +78,48 @@ class LoadSubjectController extends Controller
     }
 
     public function create(Request $request){
-        // dd($request);
-        $data = Prospectus::create($request->except("_token"));
-        if($data){
-            echo "Subject Added!";
+        $subjects = Subject::join("grades", "grades.subject_id", "=", "subjects.id")
+                            ->where([
+                                ["subjects.id", "=", $request->subject_id],
+                                ['grades.student_id', "=", $request->student_id]
+                                ])->get()->toArray();
+        if(count($subjects) == 0){
+            $subject = Subject::where("id", "=", $request->subject_id)->get()->toArray();
+            if($subject[0]["subject_prerequisite"] == NULL){
+                $data = Grades::create($request->except("_token"));
+                if($data){
+                    echo "Subject Added!";
+                }else{
+                    echo "Error adding subject";
+                }
+            }else{
+                echo "Subject has Prerequisite not complied " . $subject[0]["subject_name"];
+            }
         }else{
-            echo "Error adding department";
+            if($subjects[0]["subject_prerequisite"] == NULL){
+                $data = Grades::create($request->except("_token"));
+                if($data){
+                    echo "Subject Added!";
+                }else{
+                    echo "Error adding subject";
+                }
+            }else{
+                $subject = Subject::join("grades", "grades.subject_id", "=", "subjects.id")
+                                ->where("subjects.id", "=", $subjects[0]["subject_prerequisite"])
+                                ->get()->toArray();
+                if($subject[0]["grade"] != NULL){
+                    $data = Grades::create($request->except("_token"));
+                    if($data){
+                        echo "Subject Added!";
+                    }else{
+                        echo "Error adding subject";
+                    }
+                }else{
+                    echo "Gardes of " . $subjects[0]["subject_name"] . " is not submitted!";
+                }
+            }
         }
+
     }
 
     public function delete(Request $request){
