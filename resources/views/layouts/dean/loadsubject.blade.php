@@ -95,7 +95,8 @@
                 });
                 $.ajax({
                     url: "{{route('dean.loadsubjects.getsubjects')}}",
-                    method: "GET",
+                    type: "POST",
+                    data: {_token: $("#_token").val(), id: 1},
                     success: function(d){
                         d = JSON.parse(d);
                         d.forEach((item) => {

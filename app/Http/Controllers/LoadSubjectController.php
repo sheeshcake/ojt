@@ -22,8 +22,11 @@ class LoadSubjectController extends Controller
         return json_encode($data);
     }
 
-    public function get_subjects(){
-        $data = Subject::all()->toArray();
+    public function get_subjects(Request $request){
+        $student_course = Student::where("id", "=", $request->id)->get(["course_id"])->toArray();
+        $data = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+        ->where("prospectus.course_id", "=", $student_course[0]["course_id"])
+        ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
         return json_encode($data);
     }
 

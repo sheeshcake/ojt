@@ -83,7 +83,7 @@ Route::group(['middleware' => 'auth:dean', 'prefix' => '/dean'], function(){
     Route::prefix('loadsubjects')->group(function(){
         Route::get('/', [LoadSubjectController::class, 'index'])->name("dean.loadsubjects");
         Route::post('/', [LoadSubjectController::class, 'get'])->name("dean.getloadsubjects");
-        Route::get('/getsubjects', [LoadSubjectController::class, 'get_subjects'])->name("dean.loadsubjects.getsubjects");
+        Route::post('/getsubjects', [LoadSubjectController::class, 'get_subjects'])->name("dean.loadsubjects.getsubjects");
         Route::post('/getstudents', [LoadSubjectController::class, 'get_students'])->name("dean.loadsubjects.getstudents");
         Route::post('/add', [LoadSubjectController::class, 'create'])->name("dean.addloadsubjects");
         Route::post('/delete', [LoadSubjectController::class, 'delete'])->name("dean.deleteloadsubjects");
