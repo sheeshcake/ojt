@@ -118,7 +118,7 @@
                     success: function(d){
                         d = JSON.parse(d);
                         d.forEach((item) => {
-                            select_subject += '<option value=" ' + item['id'] +  ' ">' + item["subject_name"] + "</option>";
+                            select_subject += '<option value=" ' + item['id'] +  ' ">' + item["subject_code"] + " - " + item["subject_name"] + "</option>";
                         });
                         $("#subject").append(select_subject);
                         $("#subject").selectpicker();

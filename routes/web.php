@@ -26,7 +26,7 @@ use App\Http\Controllers\LoadSubjectController;
 
 Route::group(['middleware' => 'auth:admin', 'prefix' => '/admin'], function(){
     Route::get('/dashboard', [AdminController::class, 'index'])->name("admin.dashboard");
-
+    Route::get("/logout", [AdminController::class, 'dologout'])->name("admin.logout");
     Route::prefix('subjects')->group(function(){
         Route::get('/', [SubjectsController::class, 'index'])->name("admin.subjects");
         Route::post('/', [SubjectsController::class, 'get'])->name("admin.getsubjects");
@@ -79,6 +79,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => '/admin'], function(){
 
 
 Route::group(['middleware' => 'auth:dean', 'prefix' => '/dean'], function(){
+    Route::get("/logout", [DeanController::class, 'dologout'])->name("dean.logout");
     Route::get('/dashboard', [DeanController::class, 'index'])->name("dean.dashboard");
     Route::prefix('loadsubjects')->group(function(){
         Route::get('/', [LoadSubjectController::class, 'index'])->name("dean.loadsubjects");
@@ -98,13 +99,14 @@ Route::get("/", function () {
 });
 Route::get("/login", function(){
     return view('main');
-});
+})->name('login');
 
 
 Route::prefix('/adminlogin')->group(function(){
     Route::get("/", [AdminLoginController::class, 'index']);
     Route::post("/", [AdminLoginController::class, 'dologin'])->name("admin.login");
 });
+
 
 Route::prefix('/deanlogin')->group(function(){
     Route::get("/", [DeanLoginController::class, 'index']);

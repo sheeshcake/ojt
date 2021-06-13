@@ -26,7 +26,7 @@ class LoadSubjectController extends Controller
         $student_course = Student::where("id", "=", $request->id)->get(["course_id"])->toArray();
         $data = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
         ->where("prospectus.course_id", "=", $student_course[0]["course_id"])
-        ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id', 'subjects.id as subject_id'])->toArray();
         return json_encode($data);
     }
 
@@ -61,10 +61,7 @@ class LoadSubjectController extends Controller
                         }else{
                             $grade_total = $grade["grade"];
                         }
-                    }else{
-                        $grade_total = 'Not Enrolled';
                     }
-
                 }
             }
             $allprospectus[$counter][5] = $grade_total;
@@ -80,48 +77,80 @@ class LoadSubjectController extends Controller
         return json_encode($output);
     }
 
+
+
+
     public function create(Request $request){
-        $subjects = Subject::join("grades", "grades.subject_id", "=", "subjects.id")
-                            ->where([
-                                ["subjects.id", "=", $request->subject_id],
-                                ['grades.student_id', "=", $request->student_id]
-                                ])->get()->toArray();
-        if(count($subjects) == 0){
-            $subject = Subject::where("id", "=", $request->subject_id)->get()->toArray();
-            if($subject[0]["subject_prerequisite"] == NULL){
+        // $subjects = Subject::join("grades", "grades.subject_id", "=", "subjects.id")
+        //                     ->where([
+        //                         ["subjects.id", "=", $request->subject_id],
+        //                         ['grades.student_id', "=", $request->student_id]
+        //                         ])->get()->toArray();
+        $subject_details = Subject::where("id", "=", $request->subject_id)->get()->toArray();
+        $subject_pre = Subject::where("id", "=", $subject_details[0]["subject_prerequisite"])->get()->toArray();
+        //check if has prerequisite
+        if(count($subject_pre) == 0){
+            //no prerequisite
+            $grades_pre = Grades::join("subjects", "grades.subject_id", "=", "subjects.id")
+                        ->where([
+                            ["subjects.id", "=", $request->subject_id],
+                            ['grades.student_id', "=", $request->student_id]
+                        ])->limit(1)->orderBy("grades.id", "desc")
+                        ->get()->toArray();
+            if(count($grades_pre) > 0){
+                if(intval($grades_pre[0]["grade"]) == 5){
+                    $data = Grades::create($request->except("_token"));
+                    if($data){
+                        echo "Subject ReEnrolled!";
+                    }else{
+                        echo "Error adding subject";
+                    }
+                }else{
+                    echo $subject_details[0]["subject_name"] . " is Already Enrolled!";
+                }
+                
+            }else{
                 $data = Grades::create($request->except("_token"));
                 if($data){
                     echo "Subject Added!";
                 }else{
                     echo "Error adding subject";
                 }
-            }else{
-                echo "Subject has Prerequisite not complied " . $subject[0]["subject_name"];
             }
         }else{
-            if($subjects[0]["subject_prerequisite"] == NULL){
-                $data = Grades::create($request->except("_token"));
-                if($data){
-                    echo "Subject Added!";
-                }else{
-                    echo "Error adding subject";
-                }
+            //has prerequisite
+            //check grades of prerequisite
+            $grades_pre = Grades::join("subjects", "grades.subject_id", "=", "subjects.id")
+                ->where([
+                ["subjects.id", "=", $subject_details[0]["subject_prerequisite"]],
+                ['grades.student_id', "=", $request->student_id]
+            ])->limit(1)->orderBy("grades.id", "desc")
+            ->get()->toArray();
+            // dd($grades_pre);
+            if(count($grades_pre) == 0){
+                echo $subject_details[0]["subject_name"] . " has Prerequisite: " . $subject_pre[0]["subject_name"];
+            }else if($grades_pre[0]["grade"] == "none"){
+                echo "Waiting for grades of " . $subject_pre[0]["subject_name"];
             }else{
-                $subject = Subject::join("grades", "grades.subject_id", "=", "subjects.id")
-                                ->where("subjects.id", "=", $subjects[0]["subject_prerequisite"])
-                                ->get()->toArray();
-                if($subject[0]["grade"] != NULL){
+                if(intval($grades_pre[0]["grade"]) <= 3 && intval($grades_pre[0]["grade"]) > 0){
                     $data = Grades::create($request->except("_token"));
                     if($data){
                         echo "Subject Added!";
                     }else{
                         echo "Error adding subject";
                     }
+                }else if(intval($grades_pre[0]["grade"]) == 5){
+                    echo $subject_pre[0]["subject_name"] . " is Failed! Please Re-enroll";
+                }else if(intval($grades_pre[0]["grade"]) == 4){
+                    echo $subject_pre[0]["subject_name"] . " is Incomplete! Please Comply First.";
+                }else if(intval($grades_pre[0]["grade"]) == "dropped"){
+                    echo $subject_details[0]["subject_name"] . " has Prerequisite: " . $subject_pre[0]["subject_name"];
                 }else{
-                    echo "Gardes of " . $subjects[0]["subject_name"] . " is not submitted!";
+                    echo "Invalid Grades!";
                 }
             }
         }
+
 
     }
 

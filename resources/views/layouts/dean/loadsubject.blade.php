@@ -98,9 +98,11 @@
                     type: "POST",
                     data: {_token: $("#_token").val(), id: 1},
                     success: function(d){
+                        console.log(d);
                         d = JSON.parse(d);
                         d.forEach((item) => {
-                            select_subject += '<option value=" ' + item['id'] +  ' ">' + item["subject_name"] + "</option>";
+                            console.log(item['id'] );
+                            select_subject += '<option value=" ' + item['subject_id'] +  ' ">' + item["subject_code"] + " - " + item["subject_name"] + "</option>";
                         });
                         $("#subject").append(select_subject);
                         $("#subject").selectpicker();

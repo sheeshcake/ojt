@@ -68,7 +68,7 @@
                     success: function(d){
                         d = JSON.parse(d);
                         d.forEach((item)=>{
-                            select += "<option value='" + item["id"] + "'>" + item["subject_name"] + "</option>";
+                            select += "<option value='" + item["id"] + "'>" + item["subject_code"] + " - " + item["subject_name"] + "</option>";
                         });
                     }
                 })
@@ -81,7 +81,7 @@
                 html += '<td contenteditable id="data3" ></td>';
                 html += '<td contenteditable id="data4" ></td>';
                 html += '<td contenteditable id="data5" ></td>';
-                html += '<td><select id="data6">' + select + '</select></td>';
+                html += '<td><select id="data6"><option value="null">None</option>' + select + '</select></td>';
                 html += '<td contenteditable id="data7" ></td>';
                 html += '<td  ><button type="button" name="insert" id="insert" class="btn btn-success btn-xs">Insert</button></td>';
                 html += '</tr>';

@@ -24,5 +24,11 @@
         <li class="submenu-item @if(isset($prospectus)){{ $prospectus }}@endif">
             <a href="{{ route('admin.prospectus') }}">Prospectus</a>
         </li>
-    <ul>
+    </ul>
+</li>
+<li class="sidebar-item">
+    <a href="{{ route('admin.logout') }}" class='sidebar-link'>
+        <i class="bi bi-door-open-fill"></i>
+        <span>Logout</span>
+    </a>
 </li>
