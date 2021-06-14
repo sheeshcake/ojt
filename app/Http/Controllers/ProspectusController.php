@@ -26,8 +26,21 @@ class ProspectusController extends Controller
     }
 
     public function get(Request $request){
-        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+        // dd($request);
+        $start = 0;
+        if(isset($request->start)){
+            $start = $request->start;
+        }
+        $end = $start + 10;
+        $prospectus_count = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
                             ->where("prospectus.course_id", "=", $request->id)
+                            ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+                            ->where([
+                                ["prospectus.course_id", "=", $request->id],
+                                ["prospectus.id", ">", $start],
+                                ["prospectus.id", "<=", $end]
+                            ])
                             ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
         $subjects = Subject::all()->toArray();
         $allprospectus = [];
@@ -46,10 +59,15 @@ class ProspectusController extends Controller
             $allprospectus[$counter][6] = '<button type="button" name="delete" class="btn btn-danger btn-xs delete" id="'.$data["course_id"].'">Delete</button>';
             $counter++;
         }
+        $draw = 1;
+        if(isset($request->draw)){
+            $draw = $request->draw;
+        }
         $output = array(
-            "draw" => 1,
-            "recordsTotal" => count($prospectus),
-            "recordsFiltered" => count($prospectus),
+            "draw" => $draw,
+            "columns" => ["start" => $start,"end" => $end, "length" => 10],
+            "recordsTotal" => count($prospectus_count),
+            "recordsFiltered" => count($prospectus_count),
             "data" => $allprospectus,
         );
         return json_encode($output);

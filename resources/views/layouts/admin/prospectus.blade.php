@@ -89,16 +89,6 @@
             fetch_data();
             $(".select-picker").selectpicker();
             function fetch_data(course = 1){
-                var dataTable = $('#schedule-table').DataTable({
-                    "processing" : true,
-                    "serverSide" : true,
-                    "order" : [[4, "asc"]],
-                    "ajax" : {
-                        url:"{{ route('admin.getprospectus') }}",
-                        type:"post",
-                        data: {_token: $("#_token").val(), id: $("#course_select").val()}
-                    },
-                });
                 $.ajax({
                     url: "{{route('admin.prospectus.getcourses')}}",
                     method: "POST",
@@ -110,6 +100,17 @@
                         });
                         $("#course_select").append(select_course);
                         $("#course_select").selectpicker();
+                        var dataTable = $('#schedule-table').DataTable({
+                            "processing" : true,
+                            "serverSide" : true,
+                            "order" : [[4, "asc"]],
+                            "ajax" : {
+                                url:"{{ route('admin.getprospectus') }}",
+                                type:"post",
+                                data: {_token: $("#_token").val(), id: $("#course_select").val()}
+                            },
+                        });
+                        $('#schedule-table_processing').hide();
                     } 
                 });
                 $.ajax({
@@ -125,7 +126,9 @@
                     } 
                 });
             }
-            
+            $("#course-select").change(function(){
+                fetch_data($(this).val());
+            });
             $(document).on('blur', '.update', function(){
                 var id = $(this).data("id");
                 var column_name = $(this).data("column");

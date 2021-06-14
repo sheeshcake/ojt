@@ -31,9 +31,21 @@ class LoadSubjectController extends Controller
     }
 
     public function get(Request $request){
+        $start = 0;
+        if(isset($request->start)){
+            $start = $request->start;
+        }
+        $end = $start + 10;
         $student_course = Student::where("id", "=", $request->id)->get(["course_id"])->toArray();
         $prospectus = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
-                            ->where("prospectus.course_id", "=", $student_course[0]["course_id"])
+                            ->where([
+                                ["prospectus.course_id", "=",$student_course[0]["course_id"]],
+                                ["prospectus.id", ">", $start],
+                                ["prospectus.id", "<=", $end]
+                            ])
+                            ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
+        $prospectus_count = Prospectus::join('subjects', 'subjects.id', "=", 'prospectus.subject_id')
+                            ->where("prospectus.course_id", "=",$student_course[0]["course_id"])
                             ->get(['subjects.*', 'prospectus.*', 'prospectus.id as prospectus_id'])->toArray();
         $grades = Grades::where("student_id", "=", $request->id)->get()->toArray();
         $subjects = Subject::all()->toArray();
@@ -68,10 +80,15 @@ class LoadSubjectController extends Controller
             $allprospectus[$counter][6] = '';
             $counter++;
         }
+        $draw = 1;
+        if(isset($request->draw)){
+            $draw = $request->draw;
+        }
         $output = array(
-            "draw" => 1,
-            "recordsTotal" => count($prospectus),
-            "recordsFiltered" => count($prospectus),
+            "draw" => $draw,
+            "columns" => ["start" => $start,"end" => $end, "length" => 10],
+            "recordsTotal" => count($prospectus_count),
+            "recordsFiltered" => count($prospectus_count),
             "data" => $allprospectus,
         );
         return json_encode($output);
